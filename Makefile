@@ -6,7 +6,7 @@
 # File information:
 # Institution.... SURFsara <www.surfsara.nl>
 # Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-# Changed at..... 2014-10-31
+# Changed at..... 2014-11-03
 # License........ MIT license
 # Tab-size....... 4 spaces
 # Line length.... 100 characters
@@ -51,14 +51,17 @@ all: build run
 
 # Build the binary from the objects
 build: $(OBJS)
+	@mkdir -p $(BINDIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OBJS) $(LDFLAGS) -o $(BIN)
 
 # C++ sources
 $(OBJDIR)/%.cpp.o: $(SRCDIR)/%.cpp $(SRCDIR)/*.h
+	@mkdir -p $(OBJDIR)
 	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $< -o $@
 
 # CUDA sources
 $(OBJDIR)/%.cu.o: $(SRCDIR)/%.cu $(SRCDIR)/*.h $(SRCDIR)/*.cl
+	@mkdir -p $(OBJDIR)
 	$(NVCC) -c $(NVFLAGS) $(INCLUDES) $< -o $@
 
 # Generate assembly code from the kernels and print some statistics
