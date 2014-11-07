@@ -6,11 +6,17 @@
 # File information:
 # Institution.... SURFsara <www.surfsara.nl>
 # Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-# Changed at..... 2014-11-03
+# Changed at..... 2014-11-06
 # License........ MIT license
 # Tab-size....... 4 spaces
 # Line length.... 100 characters
 #
+# ==================================================================================================
+
+# Set the location of CUDA and clBlas
+CUDADIR = $(CUDA_HOME)
+CLBLASDIR = $(CLBLAS_HOME)
+
 # ==================================================================================================
 
 # Compilers
@@ -32,8 +38,8 @@ SCRDIR = scripts
 LDFLAGS += -lOpenCL -lclBLAS
 
 # Load CUDA and the cuBLAS library
-INCLUDES += -I$(CUDA_HOME)/include
-LDFLAGS += -L$(CUDA_HOME)/lib64
+INCLUDES += -I$(CUDADIR)/include -I$(CLBLASDIR)/include
+LDFLAGS += -L$(CUDADIR)/lib64 -L$(CLBLASDIR)/lib64
 LDFLAGS += -lcuda -lcudart -lcublas
 
 # Set the source files
