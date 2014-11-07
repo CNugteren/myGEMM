@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-10-31
+// Changed at..... 2014-11-06
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -226,6 +226,9 @@ void myclblas(float* A, float* B, float* C,
     #elif KERNEL == 10
         const size_t local[2] = { TSM/WPTM, TSN/WPTN };
         const size_t global[2] = { M_XL/WPTM, N_XL/WPTN };
+    #elif KERNEL == 11
+        const size_t local[2] = { THREADSX, THREADSY };
+        const size_t global[2] = { M/RX, N/RY };
     #endif
 
     // Start the timed loop
@@ -252,8 +255,8 @@ void myclblas(float* A, float* B, float* C,
         #endif
 
         // Wait for calculations to be finished
-        err = clWaitForEvents(1, &event);
         checkError(err,__LINE__);
+        err = clWaitForEvents(1, &event);
     }
 
     // End the timed loop

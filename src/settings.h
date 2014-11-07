@@ -49,6 +49,13 @@
 // Note: (TSK*WPTM*WPTN)/(TSN*WIDTH) has to be integer
 // Note: (TSK*WPTM*WPTN)/(TSM*WIDTH) has to be integer
 
+// Constants for kernel 11 (mimicing clBlas)
+#define THREADSX 8
+#define THREADSY 8
+#define RX 8
+#define RY 4
+#define RK (RY)
+
 // Constants for the supporting transpose kernel
 #define TRANSPOSEX 16
 #define TRANSPOSEY 16

@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-10-30
+// Changed at..... 2014-11-06
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -18,6 +18,7 @@
 #define __global 
 #define __placeholder__ __global__
 #define __local __shared__
+#define restrict __restrict__
 
 // Replace OpenCL synchronisation with CUDA synchronisation
 #define barrier(x) __syncthreads()

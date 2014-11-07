@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-10-31
+// Changed at..... 2014-11-06
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -107,6 +107,9 @@ void mycublas(float* A, float* B, float* C,
     #elif KERNEL == 10
         dim3 blocks(M_XL/TSM, N_XL/TSN);
         dim3 threads(TSM/WPTM, TSN/WPTN);
+    #elif KERNEL == 11
+        dim3 blocks(M/(THREADSX*RX), N/(THREADSY*RY));
+        dim3 threads(THREADSX, THREADSY);
     #endif
 
     // Start the timed loop
@@ -145,6 +148,8 @@ void mycublas(float* A, float* B, float* C,
             myGEMM9<<<blocks, threads>>>(M, N, K, (floatX*)bufA, (floatX*)bufB_TR, bufC);
         #elif KERNEL == 10
             myGEMM10<<<blocks, threads>>>(M_XL, N_XL, K_XL, (floatX*)bufA_XL, (floatX*)bufB_TR_XL, bufC_XL);
+        #elif KERNEL == 11
+            myGEMM11<<<blocks, threads>>>(M, N, K, (floatA*)bufA, (floatB*)bufB, (floatC*)bufC);
         #endif
 
         // Remove padded zeroes from the larger output
