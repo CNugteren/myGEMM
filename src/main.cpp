@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-10-31
+// Changed at..... 2014-11-07
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -42,6 +42,9 @@ int main(int argc, char* argv[]) {
     // Print information about the different configurations
     printf("## --- Configurations ---\n");
     for (int c=0; c<=3; c++) {
+        #ifndef ENABLE_CUDA
+            if (c == 0 || c == 2) { continue; }
+        #endif
         switch(c) {
             case 0: printf("##    cuBLAS on '%s', peak: %.1lf GFLOPS\n", GPU_NAME, peak); break;
             case 1: printf("##    clBlas on '%s', peak: %.1lf GFLOPS\n", GPU_NAME, peak); break;
@@ -72,11 +75,20 @@ int main(int argc, char* argv[]) {
             B[i] = (float)rand() / (float)RAND_MAX;
         }
 
-        // Run cuBLAS first to get the 'golden' reference output
-        libcublas(A, B, goldC, k, m, n, NUM_TIMERS-1);
+        // Run cuBLAS or clBlas first to get the 'golden' reference output
+        #ifdef ENABLE_CUDA
+            libcublas(A, B, goldC, k, m, n, NUM_TIMERS-1);
+        #else
+            libclblas(A, B, goldC, k, m, n, NUM_TIMERS-1);
+        #endif
 
         // Loop over the configurations
         for (int c=0; c<=3; c++) {
+
+            // Skip configurations if CUDA is disabled
+            #ifndef ENABLE_CUDA
+                if (c == 0 || c == 2) { continue; }
+            #endif
 
             // Set the output matrix to zero (to erase the results of the previous run)
             for (int i=0; i<m*n; i++) {
@@ -94,9 +106,13 @@ int main(int argc, char* argv[]) {
 
             // Perform the matrix-multiplication
             switch(c) {
-                case 0: libcublas(A, B, C, k, m, n, c); break;
+                #ifdef ENABLE_CUDA
+                    case 0: libcublas(A, B, C, k, m, n, c); break;
+                #endif
                 case 1: libclblas(A, B, C, k, m, n, c); break;
-                case 2: mycublas(A, B, C, k, m, n, c); break;
+                #ifdef ENABLE_CUDA
+                    case 2: mycublas(A, B, C, k, m, n, c); break;
+                #endif
                 case 3: myclblas(A, B, C, k, m, n, c); break;
             }
 
