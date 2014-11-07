@@ -2,7 +2,7 @@
 Exploring the performance of SGEMM in OpenCL on NVIDIA GPUs
 =============
 
-Date: 31-Oct-2014
+Date: 31-Oct-2014 - 07-Nov-2014
 
 Author: Cedric Nugteren, SURFsara (http://www.surfsara.nl)
 
@@ -42,5 +42,20 @@ Usage
 
 	This generates all kinds of assembly-like versions of the CUDA kernels in the "bin" subdirectory. It also prints out statistics of the kernels such as the register usage.
 
+Minimal working example
+=============
+
+Additionally, we supply the minimal.cpp file in the 'extra' directory. This file is a self-contained minimal working example (MWE) of the most basic SGEMM kernel (myGEMM1). This can be useful if you don't want to deal with Makefiles or don't have the CUDA, cuBLAS, or clBlas installed. Note that minimal.cpp misses some features compared to the main code, but we believe that it can nevertheless be a good starting point if you want to integrate myGEMM into your own code.
+
+The code can be compiled using a regular C++ compiler and only requires OpenCL installed. Example compilation from the root folder:
+
+	g++ -O3 -Wall -I/path/to/opencl/include extra/minimal.cpp -o bin/minimal -lOpenCL
+
+Be aware that the minimal working example does not:
+*	Iterate over multiple matrix sizes
+*	Compare performance with cuBLAS or clBlas
+*	Check for correctness of the results
+*	Check for OpenCL errors
+*	Load a kernel-file from disk, instead it is embedded as a string
 
 ###################################################
