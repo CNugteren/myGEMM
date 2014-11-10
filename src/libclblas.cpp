@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-10-30
+// Changed at..... 2014-11-10
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -55,6 +55,15 @@ void libclblas(float* A, float* B, float* C,
     err = clEnqueueWriteBuffer(queue, bufA, CL_TRUE, 0, M*K*sizeof(*A), A, 0, NULL, NULL);
     err = clEnqueueWriteBuffer(queue, bufB, CL_TRUE, 0, K*N*sizeof(*B), B, 0, NULL, NULL);
     err = clEnqueueWriteBuffer(queue, bufC, CL_TRUE, 0, M*N*sizeof(*C), C, 0, NULL, NULL);
+
+    // Run one (small) instance of clBlas first to pre-generate and compile the kernel
+    err = clblasSgemm(clblasColumnMajor, clblasNoTrans, clblasNoTrans,
+                      128, 128, 128, ALPHA,
+                      bufA, 0, 128,
+                      bufB, 0, 128, BETA,
+                      bufC, 0, 128,
+                      1, &queue, 0, NULL, &event);
+    err = clWaitForEvents(1, &event);
 
     // Start the timed loop
     double startTime = timer();

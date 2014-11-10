@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-11-07
+// Changed at..... 2014-11-10
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -30,12 +30,6 @@ int main(int argc, char* argv[]) {
     printf("\n##\n");
     srand(time(NULL));
 
-    // Set the performance counters to zero
-    for (int t=0; t<NUM_TIMERS; t++) {
-        timers[t].t = 0.0;
-        timers[t].kf = 0;
-    }
-
     // Compute the peak performance of the GPU
     double peak = GPU_CLOCK * GPU_CORES * GPU_MOD;
 
@@ -55,6 +49,12 @@ int main(int argc, char* argv[]) {
 
     // Loop over the different input/output matrix sizes
     for (int size=MINSIZE; size<=MAXSIZE; size=size*2) {
+
+        // Set the performance counters to zero
+        for (int t=0; t<NUM_TIMERS; t++) {
+            timers[t].t = 0.0;
+            timers[t].kf = 0;
+        }
 
         // Set the matrices to be squared (change this to get rectangular matrices)
         const int k = size;
