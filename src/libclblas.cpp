@@ -31,17 +31,24 @@ void libclblas(float* A, float* B, float* C,
     // Define OpenCL variables
     cl_platform_id platform = 0;
     cl_device_id device = 0;
+    cl_device_id devices[MAX_NUM_DEVICES];
+    cl_uint numDevices = 0;
     cl_context_properties props[3] = {CL_CONTEXT_PLATFORM, 0, 0};
     cl_context ctx = 0;
     cl_command_queue queue = 0;
     cl_event event = NULL;
+    char deviceName[MAX_DEVICE_NAME];
 
     // Configure the OpenCL environment
     err = clGetPlatformIDs(1, &platform, NULL);
-    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
+    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 0, NULL, &numDevices);
+    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, numDevices, devices, NULL);
+    device = devices[CURRENT_DEVICE];
     props[1] = (cl_context_properties)platform;
     ctx = clCreateContext(props, 1, &device, NULL, NULL, &err);
     queue = clCreateCommandQueue(ctx, device, 0, &err);
+    err = clGetDeviceInfo(device, CL_DEVICE_NAME, MAX_DEVICE_NAME, deviceName, NULL);
+    //printf("## %d devices, running on %d: '%s'\n", numDevices, CURRENT_DEVICE, deviceName);
 
     // Configure clBlas
     err = clblasSetup();

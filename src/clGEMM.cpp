@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-11-06
+// Changed at..... 2014-11-10
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -60,19 +60,26 @@ void myclblas(float* A, float* B, float* C,
     cl_int err;
     cl_platform_id platform = 0;
     cl_device_id device = 0;
+    cl_device_id devices[MAX_NUM_DEVICES];
+    cl_uint numDevices = 0;
+    cl_context_properties props[3] = {CL_CONTEXT_PLATFORM, 0, 0};
     cl_context context = 0;
     cl_command_queue queue = 0;
     cl_event event = NULL;
     cl_program program = NULL;
+    char deviceName[MAX_DEVICE_NAME];
 
     // Configure the OpenCL environment
     err = clGetPlatformIDs(1, &platform, NULL);
-    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
-    context = clCreateContext(NULL, 1, &device, NULL, NULL, &err);
+    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 0, NULL, &numDevices);
+    err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, numDevices, devices, NULL);
+    device = devices[CURRENT_DEVICE];
+    props[1] = (cl_context_properties)platform;
+    context = clCreateContext(props, 1, &device, NULL, NULL, &err);
     queue = clCreateCommandQueue(context, device, 0, &err);
-    char deviceName[1024];
-    err = clGetDeviceInfo(device, CL_DEVICE_NAME, 1024, deviceName, NULL);
+    err = clGetDeviceInfo(device, CL_DEVICE_NAME, MAX_DEVICE_NAME, deviceName, NULL);
     checkError(err,__LINE__);
+    //printf("## %d devices, running on %d: '%s'\n", numDevices, CURRENT_DEVICE, deviceName);
 
     // Read the kernel file from disk
     long sizeHeader, sizeSource;
@@ -80,7 +87,7 @@ void myclblas(float* A, float* B, float* C,
     char* source = readKernelFile(CL_KERNEL_FILE, &sizeSource);
     long size = 2 + sizeHeader + sizeSource;
     char* code = (char*)malloc(size*sizeof(char));
-    for (int c=0; c<size; c++) { code[c] = NULL; }
+    for (int c=0; c<size; c++) { code[c] = '\0'; }
     strcat(code, header);
     strcat(code, source);
     const char* constCode = code;
@@ -100,7 +107,7 @@ void myclblas(float* A, float* B, float* C,
     err = clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, logSize, messages, NULL);
     checkError(err,__LINE__);
     messages[logSize] = '\0';
-    if (logSize > 10) { printf("## Compiler message: %s\n", messages); }
+    //if (logSize > 10) { printf("## Compiler message: %s\n", messages); }
     free(messages);
 
     // Retrieve the PTX code from the OpenCL compiler and output it to disk
