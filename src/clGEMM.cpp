@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-11-10
+// Changed at..... 2014-11-17
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -179,7 +179,7 @@ void myclblas(float* A, float* B, float* C,
         err = clSetKernelArg(kernel2, 3, sizeof(cl_mem), (void*)&bufB_TR);
         checkError(err,__LINE__);
         const size_t tLocal[2] = { TRANSPOSEX, TRANSPOSEY };
-        const size_t tGlobal[2] = { K, N };
+        const size_t tGlobal[2] = { (size_t)K, (size_t)N };
     #endif
 
     // Configure the supporting padding kernels and set their arguments (only for myGEMM10)
@@ -212,30 +212,30 @@ void myclblas(float* A, float* B, float* C,
         err = clSetKernelArg(kernel3c, 5, sizeof(cl_mem), (void*)&bufC);
         checkError(err,__LINE__);
         const size_t pLocal[2] = { PADDINGX, PADDINGY };
-        const size_t pAGlobal[2] = { M_XL, K_XL };
-        const size_t pBGlobal[2] = { N_XL, K_XL };
-        const size_t pCGlobal[2] = { M, N };
+        const size_t pAGlobal[2] = { (size_t)M_XL, (size_t)K_XL };
+        const size_t pBGlobal[2] = { (size_t)N_XL, (size_t)K_XL };
+        const size_t pCGlobal[2] = { (size_t)M, (size_t)N };
     #endif
 
     // Configure the thread/work-group dimensions of the myGEMM kernel
     #if KERNEL == 1 || KERNEL == 2
         const size_t local[2] = { TS, TS };
-        const size_t global[2] = { M, N };
+        const size_t global[2] = { (size_t)M, (size_t)N };
     #elif KERNEL == 3 || KERNEL == 5
         const size_t local[2] = { TS, TS/WPT };
-        const size_t global[2] = { M, N/WPT };
+        const size_t global[2] = { (size_t)M, (size_t)(N/WPT) };
     #elif KERNEL == 4
         const size_t local[2] = { TS/WIDTH, TS };
-        const size_t global[2] = { M/WIDTH, N };
+        const size_t global[2] = { (size_t)(M/WIDTH), (size_t)N };
     #elif KERNEL == 6 || KERNEL == 7 || KERNEL == 8 || KERNEL == 9
         const size_t local[2] = { TSM/WPTM, TSN/WPTN };
-        const size_t global[2] = { M/WPTM, N/WPTN };
+        const size_t global[2] = { (size_t)(M/WPTM), (size_t)(N/WPTN) };
     #elif KERNEL == 10
         const size_t local[2] = { TSM/WPTM, TSN/WPTN };
-        const size_t global[2] = { M_XL/WPTM, N_XL/WPTN };
+        const size_t global[2] = { (size_t)(M_XL/WPTM), (size_t)(N_XL/WPTN) };
     #elif KERNEL == 11
         const size_t local[2] = { THREADSX, THREADSY };
-        const size_t global[2] = { M/RX, N/RY };
+        const size_t global[2] = { (size_t)(M/RX), (size_t)(N/RY) };
     #endif
 
     // Start the timed loop
