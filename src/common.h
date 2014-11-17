@@ -6,7 +6,7 @@
 // File information:
 // Institution.... SURFsara <www.surfsara.nl>
 // Author......... Cedric Nugteren <cedric.nugteren@surfsara.nl>
-// Changed at..... 2014-11-10
+// Changed at..... 2014-11-17
 // License........ MIT license
 // Tab-size....... 4 spaces
 // Line length.... 100 characters
@@ -44,7 +44,7 @@
 // OpenCL settings
 #define MAX_NUM_DEVICES 16
 #define MAX_DEVICE_NAME 1024
-#define CURRENT_DEVICE 1
+#define CURRENT_DEVICE 0
 
 // =================================================================================================
 
